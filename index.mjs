@@ -3,7 +3,7 @@ import * as path from "path";
 
 const themeRelativePath = 'themes/prismify-bootstrap-starter-kit/partials';
 const file = process.argv[2];
-const partialRegexp = new RegExp('(?<=partial )".+?"', 'gm')
+const partialRegexp = new RegExp('(?<=partial )["\'].+?["\']', 'gm')
 
 if (!file) {
     throw new Error("missing file parameter");
@@ -11,13 +11,18 @@ if (!file) {
 
 function getPartialDeclarationsFromFile(file) {
     const result = [];
-    const content = fs.readFileSync(file).toString();
-    const matches = content.match(partialRegexp);
+    try {
+        const content = fs.readFileSync(file).toString();
 
-    if (matches) {
-        for (const match of matches) {
-            result.push(match.substring(1, match.length - 1))
+        const matches = content.match(partialRegexp);
+
+        if (matches) {
+            for (const match of matches) {
+                result.push(match.substring(1, match.length - 1))
+            }
         }
+    } catch (e) {
+        console.error(e);
     }
 
     return result;
